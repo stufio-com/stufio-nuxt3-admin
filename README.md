@@ -1,4 +1,4 @@
-# STUFIO.com Admin Panel with Nuxt3 Vue.js
+# STUFIO.com Admin Panel with Nuxt3 Vue.jscd 
 
 A modular, extensible admin interface built with Nuxt 3 and Vue.js for the Stufio framework.
 
