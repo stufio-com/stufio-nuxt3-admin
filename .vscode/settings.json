@@ -1,0 +1,30 @@
+{
+  "python.analysis.extraPaths": [
+    "./nameniac_fastapi/env/lib/python3.11/site-packages/",
+    "./stufio-modules-activity/",
+    "./stufio-framework/"
+  ],
+  "sqltools.connections": [
+    {
+      "server": "localhost",
+      "port": 8123,
+      "useHTTPS": false,
+      "database": "nameniac",
+      "username": "default",
+      "enableTls": false,
+      "previewLimit": 50,
+      "driver": "ClickHouse",
+      "name": "clickhouse",
+      "group": "nameniac",
+      "password": ""
+    }
+  ],
+
+  "i18n-ally.localesPaths": ["locales"],
+  "i18n-ally.pathMatcher": "{locale}.json",
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.sourceLanguage": "en", 
+  "i18n-ally.extract.autoDetect": true,
+  "i18n-ally.extract.keyMaxLength": 80,
+  "i18n-ally.enabledParsers": ["js", "ts", "vue"],
+}
