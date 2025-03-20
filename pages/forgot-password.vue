@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Mail, Eye, EyeOff } from 'lucide-vue-next'
-import { useAuthStore } from '~/stores/auth'
+import { useAuthStore } from '~/stores/client.auth'
 
 definePageMeta({
   layout: 'login'
@@ -28,7 +28,7 @@ const password = ref('')
 const confirmPassword = ref('')
 const showPassword = ref(false)
 
-const authStore = useAuthStore()
+const authStore = useClientAuth()
 
 // Check for token in URL
 onMounted(() => {
@@ -119,9 +119,7 @@ const handleResetSubmit = async () => {
 <template>
   <div class="flex flex-col items-center">
     <!-- Logo placed above card -->
-    <div class="mb-0 text-center">
-      <img src="~/assets/img/stufiotop.png" :alt="$t('Stufio Logo')" class="w-64 mx-auto" />
-    </div>
+    <StufioLogo size="md" showText containerClass="mb-4 text-center" />
 
     <!-- Request form -->
     <Card v-if="!showResetForm && !success" class="mx-auto max-w-sm w-full">

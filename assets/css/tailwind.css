@@ -65,11 +65,81 @@
   }
 }
 
+/* Add these component classes for reusable styling */
+@layer components {
+  /* Dropdown button styling */
+  .stufio-dropdown-button {
+    @apply inline-flex items-center justify-center px-3 py-1.5 rounded-md text-sm font-medium 
+           bg-white/80 dark:bg-gray-700/80 
+           hover:bg-white/90 dark:hover:bg-gray-600/90 
+           text-gray-700 dark:text-gray-200 
+           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 
+           transition-colors shadow-sm border border-gray-200 dark:border-gray-700;
+  }
+  
+  /* Dropdown container styling */
+  .stufio-dropdown-container {
+    @apply origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg 
+           bg-white dark:bg-gray-800 
+           ring-1 ring-black/5 dark:ring-white/10 
+           focus:outline-none z-50;
+  }
+  
+  /* Dropdown menu styling */
+  .stufio-dropdown-menu {
+    @apply py-1;
+  }
+  
+  /* Dropdown item styling */
+  .stufio-dropdown-item {
+    @apply w-full text-left px-4 py-2 text-sm 
+           hover:bg-gray-100 dark:hover:bg-gray-700 
+           flex items-center;
+  }
+  
+  /* Dropdown item active state */
+  .stufio-dropdown-item-active {
+    @apply font-medium text-indigo-600 dark:text-indigo-400;
+  }
+  
+  /* Dropdown item inactive state */
+  .stufio-dropdown-item-inactive {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+  
+  /* Panel styling for control groups */
+  .stufio-control-panel {
+    @apply backdrop-blur-xl bg-white/70 dark:bg-gray-800/70 
+           shadow-md rounded-lg p-2 
+           border border-gray-200 dark:border-gray-700;
+  }
+  
+  /* Control group styling */
+  .stufio-control-group {
+    @apply flex items-center gap-2;
+  }
+  
+  /* Divider for controls */
+  .stufio-control-divider {
+    @apply h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1;
+  }
+}
 
+/* Your existing utility classes */
 .rainbow-text {
   background-image: linear-gradient(90deg, #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
+}
+
+/* This reduces flashing by preventing transitions during page load */
+.no-transitions * {
+  transition: none !important;
+}
+
+/* Add this class to html initially, then remove it after a short delay */
+html.no-transitions {
+  transition: none !important;
 }

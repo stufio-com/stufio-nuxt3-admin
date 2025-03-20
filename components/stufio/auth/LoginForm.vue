@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { ShieldUser, Mail, Eye, EyeOff } from 'lucide-vue-next'
-import { useAuthStore } from '~/stores/auth'
+import { useDialog } from '~/composables/useDialog'
+import { useTranslations } from '~/stufio-nuxt-locale/src/runtime/composables/useTranslations'
+
+// Get i18n composable
+const { t } = useTranslations()
+const emit = defineEmits(['login:success', 'login:error', 'login:cancel'])
 
 const email = ref('')
 const password = ref('')
@@ -19,7 +14,8 @@ const errors = ref<{ email?: string; password?: string }>({})
 const isSubmitting = ref(false)
 
 // Get auth store
-const authStore = useAuthStore()
+const authStore = useClientAuth()
+const dialog = useDialog()
 
 // Toggle password visibility
 const togglePasswordVisibility = () => {
@@ -31,13 +27,13 @@ const validateForm = () => {
   errors.value = {}
   
   if (!email.value) {
-    errors.value.email = 'Email is required'
+    errors.value.email = t('Email is required')
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-    errors.value.email = 'Please enter a valid email address'
+    errors.value.email = t('Please enter a valid email address')
   }
   
   if (!password.value) {
-    errors.value.password = 'Password is required'
+    errors.value.password = t('Password is required')
   }
   
   return Object.keys(errors.value).length === 0
@@ -56,12 +52,16 @@ const handleSubmit = async () => {
     })
     
     if (success) {
-      navigateTo('/dashboard')
+      emit('login:success', authStore.user)
+      await navigateTo('/dashboard')
     } else if (authStore.error) {
       errors.value.email = authStore.error
+      emit('login:error', authStore.error)
     }
   } catch (err: any) {
-    errors.value.email = err.message || 'Login failed'
+    const errorMsg = err.message || t('Login failed')
+    errors.value.email = errorMsg
+    emit('login:error', errorMsg)
   } finally {
     isSubmitting.value = false
   }
@@ -70,55 +70,64 @@ const handleSubmit = async () => {
 // Handle magic link login
 const handleMagicLink = async () => {
   if (!email.value) {
-    errors.value.email = $t('Email is required')
+    errors.value.email = t('Email is required')
     return
   }
   
   isSubmitting.value = true
   
   try {
-    const { data, error } = await useApi(`/api/v1/login/magic/${encodeURIComponent(email.value)}`, {
-      method: 'POST'
-    })
+    // Use the refactored method from auth store
+    const message = await authStore.requestMagicLink({ email: email.value })
     
-    if (error.value) {
-      errors.value.email = error.value.message || 'Failed to send magic link'
-    } else {
-      // Show success message
-      alert('Magic link sent to your email!')
-    }
+    // Show success message using dialog system
+    dialog.message({
+      title: t('Success'),
+      message: message || t('Login link sent to your email!'),
+      variant: 'success'
+    })
   } catch (err: any) {
-    errors.value.email = err.message || 'Failed to send magic link'
+    const errorMsg = err.message || t('Failed to send magic link')
+    errors.value.email = errorMsg
+    emit('login:error', errorMsg)
   } finally {
     isSubmitting.value = false
   }
 }
+
+// Reset form when mounted
+onMounted(() => {
+  email.value = ''
+  password.value = ''
+  errors.value = {}
+  showPassword.value = false
+})
 </script>
 
 <template>
   <!-- Login card -->
-  <Card class="mx-auto max-w-sm w-full min-w-[350px]">
+  <Card class="mx-auto max-w-sm w-full">
     <CardHeader>
       <CardTitle>
-        {{ $t('Admin Dashboard') }}
+        {{ t('Admin Dashboard') }}
       </CardTitle>
       <CardDescription class="font-lexend text-sm text-gray-500">
-        {{ $t('Enter your administrator credentials to login') }}
+        {{ t('Enter your administrator credentials to login') }}
       </CardDescription>
     </CardHeader>
     <CardContent>
       <form @submit.prevent="handleSubmit" class="grid gap-4">
         <div class="grid gap-2">
-          <Label for="email">Email</Label>
+          <Label for="email">{{ t('Email') }}</Label>
           <Input id="email" v-model="email" type="email" placeholder="admin@email.com"
             :class="{ 'border-red-500': errors.email }" required />
           <p v-if="errors.email" class="text-sm text-red-500">{{ errors.email }}</p>
         </div>
         <div class="grid gap-2">
           <div class="flex items-center justify-between">
-            <Label for="password">Password</Label>
+            <Label for="password">{{ t('Password') }}</Label>
             <NuxtLink to="/forgot-password" class="text-sm underline">
-              Forgot password?
+              {{ t('Forgot password?') }}
             </NuxtLink>
           </div>
           <div class="relative">
@@ -134,10 +143,10 @@ const handleMagicLink = async () => {
         </div>
         <Button type="submit" class="w-full" :disabled="isSubmitting">
           <ShieldUser class="mr-2 h-4 w-4" />
-          {{ isSubmitting ? $t('Logging in...') : $t('Login') }}
+          {{ isSubmitting ? t('Logging in...') : t('Login') }}
         </Button>
         <Button type="button" variant="outline" class="w-full" @click="handleMagicLink" :disabled="isSubmitting">
-          <Mail class="mr-2 h-4 w-4" /> {{ $t('Login with Email Link') }}
+          <Mail class="mr-2 h-4 w-4" /> {{ t('Login with Email Link') }}
         </Button>
       </form>
     </CardContent>

@@ -1,0 +1,77 @@
+<script setup lang="ts">
+import { useLocale } from '~/stufio-nuxt-locale/src/runtime/composables/useLocale'
+import { useTranslations } from '~/stufio-nuxt-locale/src/runtime/composables/useTranslations'
+
+// Component props for customization
+const props = defineProps({
+    // /** Display mode for locale selector */
+    // displayMode: {
+    //     type: String,
+    //     default: 'both', // 'both', 'flag-only', or 'text-only'
+    //     validator: (value) => ['both', 'flag-only', 'text-only'].includes(value)
+    // },
+    /** Class name for the button */
+    buttonClass: {
+        type: String,
+        default: 'inline-flex items-center justify-center px-3 py-1.5 rounded-md text-sm font-medium bg-white border border-gray-200 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+    }
+})
+
+// Get locale and translations from our module
+const { locale, locales, setLocale, formatLocale } = useLocale()
+const { t } = useTranslations()
+
+// For dropdown state
+const isOpen = ref(false)
+
+// Format current locale display with flag emoji if available
+const getLocaleDisplay = (localeCode) => {
+    return localeCode.toUpperCase()
+}
+
+// Handle locale change
+const changeLocale = async (newLocale) => {
+  await setLocale(newLocale)
+  isOpen.value = false
+}
+
+// Close dropdown when clicking outside
+const dropdownRef = ref(null)
+if (process.client) {
+  window.addEventListener('click', (event) => {
+    if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+      isOpen.value = false
+    }
+  })
+}
+</script>
+
+<template>
+  <div ref="dropdownRef" class="relative inline-block text-left">
+    <!-- Current locale button -->
+    <button @click="isOpen = !isOpen" type="button" class="stufio-dropdown-button" aria-expanded="true" aria-haspopup="true">
+      <span v-html="getLocaleDisplay(locale)"></span>
+      <svg class="-mr-1 ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+        aria-hidden="true">
+        <path fill-rule="evenodd"
+          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+          clip-rule="evenodd" />
+      </svg>
+    </button>
+
+    <!-- Dropdown menu -->
+    <div v-if="isOpen" class="stufio-dropdown-container" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+      <div class="stufio-dropdown-menu" role="none">
+        <!-- Locale options -->
+        <button v-for="localeCode in locales" :key="localeCode" @click="changeLocale(localeCode)"
+          class="stufio-dropdown-item"
+          :class="{
+            'stufio-dropdown-item-active': localeCode === locale,
+            'stufio-dropdown-item-inactive': localeCode !== locale
+          }" role="menuitem" tabindex="-1">
+          <span v-html="getLocaleDisplay(localeCode)"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,8 +1,21 @@
 <script setup>
+definePageMeta({
+  layout: 'login'
+})
+
 // Redirect to dashboard or login page
-const token = useCookie('auth_token')
+const route = useRoute()
+const authStore = useClientAuth()
+
 onMounted(() => {
-  if (token.value) {
+  // If there's a token or magic parameter in the URL, don't redirect
+  // This allows the TokenValidator to process these parameters
+  if (route.query.token || route.query.magic) {
+    return
+  }
+  
+  // Check auth state from store instead of cookie
+  if (authStore.authenticated && authStore.token) {
     navigateTo('/dashboard')
   } else {
     navigateTo('/login')
@@ -12,6 +25,9 @@ onMounted(() => {
 
 <template>
   <div class="flex h-screen items-center justify-center">
-    <p>Redirecting...</p>
+    <StufioLogo size="lg" />
+
+    <!-- Auth token validator - hidden but always present -->
+    <StufioAuthTokenValidator />
   </div>
 </template>

@@ -173,3 +173,10 @@ MIT
 ## About Stufio
 
 Stufio is a modular framework for building scalable web applications. The admin panel provides a unified interface for managing all aspects of your Stufio-powered application.
+
+
+## Documentation
+
+For more detailed documentation on specific components and features:
+
+- [Dialog System](./docs/components/ui/dialogs.md) - Global dialog and modal system
