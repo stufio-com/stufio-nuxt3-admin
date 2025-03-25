@@ -107,7 +107,7 @@ export const useAuthStore = defineStore("auth", {
             scope: "",
           }),
         });
-        
+
         if (error.value) {
           throw new Error(
             String(error.value?.data?.detail) ||
@@ -202,6 +202,7 @@ export const useAuthStore = defineStore("auth", {
           this.token = data.value.access_token;
           this.refreshToken = data.value.refresh_token || this.refreshToken;
           this.authenticated = true;
+          this.lastTokenCheck = Date.now();
           return true;
         }
 
@@ -216,12 +217,12 @@ export const useAuthStore = defineStore("auth", {
      */
     logout(this: AuthStore) {
       // Optionally call an API endpoint to invalidate the token
-      if (this.token) {
+      if (this.refreshToken) {
         // Fire and forget - don't wait for response
         useApi("/api/v1/login/revoke", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${this.token}`,
+            Authorization: `Bearer ${this.refreshToken}`,
           },
         }).catch(() => {});
       }

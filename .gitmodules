@@ -1,0 +1,3 @@
+[submodule "stufio-nuxt-locale"]
+	path = stufio-nuxt-locale
+	url = git@github.com:stufio-com/stufio-nuxt-locale.git
