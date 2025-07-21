@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useStorage } from "@vueuse/core";
+import { useEventBus, AppEvents } from "~/composables/useEventBus";
 
 // Interface definitions for type safety
 interface User {
@@ -92,6 +93,7 @@ export const useAuthStore = defineStore("auth", {
       this: AuthStore,
       { email, password }: { email: string; password: string }
     ) {
+      const eventBus = useEventBus();
       this.loading = true;
       this.error = null;
 
@@ -120,9 +122,13 @@ export const useAuthStore = defineStore("auth", {
           this.token = data.value.access_token;
           this.refreshToken = data.value.refresh_token || null;
           this.authenticated = true;
+          this.lastTokenCheck = Date.now();
 
           // Load user data
           await this.loadUser();
+          
+          // Emit login event
+          eventBus.emit(AppEvents.LOGIN, { user: this.user });
         }
 
         return this.authenticated;
@@ -180,6 +186,8 @@ export const useAuthStore = defineStore("auth", {
      * Refresh the access token using refresh token
      */
     async refreshAccessToken(this: AuthStore): Promise<boolean | void> {
+      const eventBus = useEventBus();
+      
       if (!this.refreshToken) return false;
 
       try {
@@ -203,6 +211,9 @@ export const useAuthStore = defineStore("auth", {
           this.refreshToken = data.value.refresh_token || this.refreshToken;
           this.authenticated = true;
           this.lastTokenCheck = Date.now();
+          
+          // Emit token refresh event
+          eventBus.emit(AppEvents.TOKEN_REFRESH, { token: this.token });
           return true;
         }
 
@@ -216,6 +227,8 @@ export const useAuthStore = defineStore("auth", {
      * Log out the current user
      */
     logout(this: AuthStore) {
+      const eventBus = useEventBus();
+      
       // Optionally call an API endpoint to invalidate the token
       if (this.refreshToken) {
         // Fire and forget - don't wait for response
@@ -233,6 +246,9 @@ export const useAuthStore = defineStore("auth", {
       this.user = null;
       this.authenticated = false;
       this.error = null;
+
+      // Emit logout event
+      eventBus.emit(AppEvents.LOGOUT);
 
       // Navigate to login page
       navigateTo("/login");
@@ -461,6 +477,7 @@ export const useAuthStore = defineStore("auth", {
           this.token = data.value.access_token;
           this.refreshToken = data.value.refresh_token || null;
           this.authenticated = true;
+          this.lastTokenCheck = Date.now();
 
           // Load user data
           await this.loadUser();

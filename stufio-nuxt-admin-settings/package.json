@@ -1,0 +1,42 @@
+{
+  "name": "stufio-nuxt-admin-settings",
+  "version": "0.1.0",
+  "description": "A reusable admin settings module for Stufio applications",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
+    }
+  },
+  "main": "./dist/module.cjs",
+  "types": "./dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "nuxt-module-build",
+    "dev": "nuxi dev playground",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "nuxt-module-build --stub && nuxi prepare playground",
+    "prepack": "npm run build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^3.9.0",
+    "@vee-validate/zod": "^4.12.5",
+    "date-fns": "^3.3.1",
+    "vee-validate": "^4.12.5",
+    "zod": "^3.22.4",
+    "reka-ui": "^2.1.1"
+  },
+  "devDependencies": {
+    "@nuxt/eslint-config": "^0.2.0",
+    "@nuxt/module-builder": "^0.5.5",
+    "@types/node": "^20.11.5",
+    "eslint": "^8.56.0",
+    "nuxt": "^3.9.3"
+  }
+}

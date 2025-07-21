@@ -23,7 +23,11 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     // "stufio-nuxt-locale",
     "./stufio-nuxt-locale/src/module",
+    "./stufio-nuxt-admin-settings/src/module",
   ],
+  stufioSettings: {
+    debug: true,
+  },
   stufioi18n: {
     // The default locale to use if none is detected
     defaultLocale: "en",
@@ -74,7 +78,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     // Private keys are only available on the server
-    apiInternalBaseURL: process.env.NUXT_API_INTERNAL_URL || process.env.NUXT_API_URL || "/",
+    apiInternalBaseURL:
+      process.env.NUXT_API_INTERNAL_URL || process.env.NUXT_API_URL || "/",
     apiSecret: process.env.NUXT_API_SECRET || "development-secret-key",
     apiClient: process.env.NUXT_API_CLIENT || "stufio-admin",
     i18nModule: process.env.NUXT_I18N_MODULE || "admin",
@@ -146,8 +151,5 @@ export default defineNuxtConfig({
       ],
     },
   },
-  plugins: [
-    '~/plugins/auth',
-    '~/plugins/authTokenRefresh',
-  ]
+  plugins: ["~/plugins/auth", "~/plugins/authTokenRefresh"],
 });

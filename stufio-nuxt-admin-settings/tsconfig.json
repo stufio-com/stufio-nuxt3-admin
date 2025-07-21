@@ -1,0 +1,22 @@
+{
+  // "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "lib": ["ESNext", "DOM"],
+    "types": ["node"],
+    "paths": {
+      "#imports": ["./.nuxt/types/imports"]
+    }
+  },
+  "include": ["./src/**/*", "./playground/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
